@@ -1,0 +1,10 @@
+.DS_Store
+
+.env
+/node_modules
+/public/build
+/public/css
+/public/js
+/public/storage
+/public/vendor/bower_components
+/vendor

@@ -1,0 +1,46 @@
+version: '2'
+services:
+  laravel:
+    build:
+      context: ./
+      dockerfile: ./docker/laravel/Dockerfile
+    ports:
+      - 8080:8000
+    links:
+      - postgres:db
+    volumes:
+      - ./:/var/www/html
+
+  node:
+    build:
+      context: ./
+      dockerfile: ./docker/node/Dockerfile
+    volumes_from:
+      - laravel:rw
+    stop_signal: SIGKILL
+
+  nginx:
+    build:
+      context: ./docker/nginx
+    ports:
+      - 80:80
+    links:
+      - laravel:fpm
+    volumes_from:
+      - laravel:ro
+
+  postgres:
+    image: postgres
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_DB: ${DB_DATABASE}
+      PGDATA: /var/lib/postgresql/data/dbstore
+    volumes:
+      - cordova_app_dbstore:/var/lib/postgresql/data/dbstore
+
+volumes:
+  cordova_app_dbstore:
+    external: false
