@@ -3,8 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use GuzzleHttp\Client as HttpClient;
-use GuzzleHttp\Promise as HttpPromise;
 use App\Repositories\FlickrRepositories;
 use App\Http\Requests\PhotosSearchRequest;
 
