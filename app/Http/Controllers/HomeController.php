@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\Promise as HttpPromise;
 use App\Repositories\FlickrRepositories;
+use App\Http\Requests\PhotosSearchRequest;
 
 class HomeController extends Controller
 {
@@ -32,16 +33,16 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(PhotosSearchRequest $request)
     {
         $images = array_map(function ($item) {
-            $sizes = array_get($item, 'sizes.size');
+            $size = array_get($item, 'sizes');
 
-            return $sizes[round(count($sizes) / 3)];
+            return $size[round(count($size) / 3)];
 
-        }, $this->flickr->search());
+        }, $this->flickr->search($request->all()));
 
-        return view('poll', compact('images'));
+        return view('home.index', compact('images'));
     }
 
     public function unsplash()
