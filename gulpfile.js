@@ -19,5 +19,5 @@ elixir(mix => {
 });
 
 elixir(mix => {
-    mix.copy('./node_modules/font-awesome/fonts', './public/fonts');
+    mix.copy('node_modules/font-awesome/fonts', 'public/fonts');
 });
