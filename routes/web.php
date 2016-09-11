@@ -24,3 +24,4 @@ Route::get('/', function () {
 
 
 Route::get('/home', 'HomeController@index');
+Route::get('/photos', 'HomeController@photos');
