@@ -39,6 +39,17 @@ class HomeController extends Controller
     public function photos(PhotosSearchRequest $request)
     {
         return array_map(function ($photo) {
+            // Convert Carbon instance to string datetime.
+            $photo['info']['updated_at'] = $photo['info']['updated_at']->toDayDateTimeString();
+            $photo['info']['uploaded_at'] = $photo['info']['uploaded_at']->toDayDateTimeString();
+
+            return $photo;
+        }, $this->search($request));
+    }
+
+    protected function search(PhotosSearchRequest $request)
+    {
+        return array_map(function ($photo) {
             $size = array_get($photo, 'sizes');
 
             $photo['item'] = $size[round(count($size) / 3)];
