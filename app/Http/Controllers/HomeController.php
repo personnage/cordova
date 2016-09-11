@@ -33,17 +33,10 @@ class HomeController extends Controller
      */
     public function index(PhotosSearchRequest $request)
     {
-        $photos = $this->search($request);
-
-        return view('home.index', compact('photos'));
+        return view('home.index');
     }
 
     public function photos(PhotosSearchRequest $request)
-    {
-        return $this->search($request);
-    }
-
-    protected function search(PhotosSearchRequest $request)
     {
         return array_map(function ($photo) {
             $size = array_get($photo, 'sizes');

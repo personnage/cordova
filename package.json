@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "font-awesome": "^4.6.3",
-    "freewall": "^1.0.8"
+    "freewall": "^1.0.8",
+    "ladda": "^1.0.0"
   }
 }
