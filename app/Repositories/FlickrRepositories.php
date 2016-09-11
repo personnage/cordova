@@ -175,6 +175,13 @@ class FlickrRepositories
             'title' => $photo['title']['_content'],
             'description' => $photo['description']['_content'],
 
+            'tags' => array_map(function ($tag) {
+                return [
+                    'raw' => $tag['raw'],
+                    'name' => $tag['_content'],
+                ];
+            }, array_get($photo, 'tags.tag')),
+
             'location' => [
                 'latitude' => $photo['location']['latitude'],
                 'longitude' => $photo['location']['longitude'],

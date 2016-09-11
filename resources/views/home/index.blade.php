@@ -7,6 +7,14 @@
   html, body {
     background: url("http://subtlepatterns2015.subtlepatterns.netdna-cdn.com/patterns/swirl_pattern.png");
   }
+
+  .map {
+    width: 100%;
+    height: 300px;
+    margin: 0;
+    padding: 0;
+  }
+
 </style>
 @endpush
 
@@ -38,7 +46,39 @@
               </div>
 
               <div class="modal-body">
-                <img src="{{ $photo['item']['source'] }}" class="img-responsive" alt="Responsive image">
+                <div class="panel panel-info">
+                  {{-- Head --}}
+                  <div class="panel-heading">
+                    <dl class="dl-horizontal">
+                      <dt>ID:</dt>
+                      <dd>{{ $photo['id'] }}</dd>
+
+                      <dt>Title:</dt>
+                      <dd>{{ $photo['title'] }}</dd>
+
+                      <dt>Uploaded:</dt>
+                      <dd>{{ array_get($photo, 'info.uploaded_at')->toDayDateTimeString() }}</dd>
+                    </dl>
+                  </div>
+
+                  {{-- Body --}}
+                  <div class="panel-body">
+                    {{-- Fetch very big photo --}}
+                    <img src="{{ array_get(last($photo['sizes']), 'source') }}" class="img-responsive" />
+                  </div>
+
+                  {{-- Footer --}}
+                  <div class="panel-footer">
+
+                    <div class="map"
+                      data-maps-attr-lat="{{ array_get($photo, 'info.location.latitude') }}"
+                      data-maps-attr-lng="{{ array_get($photo, 'info.location.longitude') }}"
+                      data-maps-attr-title="{{ array_get($photo, 'info.title') }}"
+                      data-maps-attr-content="{{ array_get($photo, 'info.description') }}"
+                    ></div>
+
+                  </div>
+                </div>
               </div>
 
               <div class="modal-footer">
@@ -56,5 +96,49 @@
     </div>
   </div>
 </div>
+@push('scripts')
+
+  <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU" type="text/javascript"></script>
+  <script>
+    ymaps.ready(initMap);
+
+    function initMap() {
+      var map, maps = [], myLatLng = [], placemark;
+
+      document.querySelectorAll('.map').forEach(function (elem) {
+        myLatLng = [elem.dataset.mapsAttrLat, elem.dataset.mapsAttrLng];
+
+        map = new ymaps.Map(elem, {
+            center: myLatLng,
+            zoom: 5,
+            controls: ['smallMapDefaultSet'],
+        });
+
+        placemark = new ymaps.GeoObject({
+            // Описание геометрии.
+            geometry: {
+                type: "Point",
+                coordinates: map.getCenter()
+            },
+            // Свойства.
+            properties: {
+                hintContent: elem.dataset.mapsAttrTitle || '',
+                balloonContent: elem.dataset.mapsAttrContent || ''
+            }
+        }, {
+            // Опции.
+            // Иконка метки будет растягиваться под размер ее содержимого.
+            preset: 'islands#circleIcon',
+            // Метку можно перемещать.
+            draggable: true
+        });
+
+        map.geoObjects.add(placemark);
+
+        // maps.push(map);
+      });
+    }
+  </script>
+@endpush
 
 @endsection
