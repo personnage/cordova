@@ -39,7 +39,7 @@
                   <dd>{{ photo.info.title }}</dd>
 
                   <dt>Uploaded:</dt>
-                  <dd>{{ photo.info.uploaded_at.date }}</dd>
+                  <dd>{{ photo.info.uploaded_at }}</dd>
                 </dl>
               </div>
 
