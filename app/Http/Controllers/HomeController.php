@@ -35,14 +35,14 @@ class HomeController extends Controller
      */
     public function index(PhotosSearchRequest $request)
     {
-        $images = array_map(function ($item) {
+        $photos = array_map(function ($item) {
             $size = array_get($item, 'sizes');
 
             return $size[round(count($size) / 3)];
 
         }, $this->flickr->search($request->all()));
 
-        return view('home.index', compact('images'));
+        return view('home.index', compact('photos'));
     }
 
     public function unsplash()

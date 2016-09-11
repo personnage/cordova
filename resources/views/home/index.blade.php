@@ -14,8 +14,8 @@
   <div class="row">
     <div class="col-sm-12">
       <div id="freewall" class="free-wall">
-      @foreach($images as  $image)
-        <div class="cell" style="width: {{$image['width']}}px; height: {{$image['height']}}px; background-image: url({{ $image['source'] }})"></div>
+      @foreach($photos as $photo)
+        <div class="cell" style="width: {{$photo['width']}}px; height: {{$photo['height']}}px; background-image: url({{ $photo['source'] }})"></div>
       @endforeach
       </div>
     </div>
