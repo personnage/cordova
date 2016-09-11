@@ -35,7 +35,19 @@ class HomeController extends Controller
      */
     public function index(PhotosSearchRequest $request)
     {
-        $photos = array_map(function ($photo) {
+        $photos = $this->search($request);
+
+        return view('home.index', compact('photos'));
+    }
+
+    public function photos(PhotosSearchRequest $request)
+    {
+        return $this->search($request);
+    }
+
+    protected function search(PhotosSearchRequest $request)
+    {
+        return array_map(function ($photo) {
             $size = array_get($photo, 'sizes');
 
             $photo['item'] = $size[round(count($size) / 3)];
@@ -43,32 +55,5 @@ class HomeController extends Controller
             return $photo;
 
         }, $this->flickr->search($request->all()));
-
-        return view('home.index', compact('photos'));
-    }
-
-    public function unsplash()
-    {
-        $client = new HttpClient(['base_uri' => 'https://unsplash.it/']);
-        $promises = [];
-        $imagesSize = [];
-
-        for ($i = 0; $i < 50; ++$i) {
-            $w = mt_rand(150, 300);
-
-            $promises []= $client->getAsync("$w/300?random");
-            $imagesSize []= ['w' => $w];
-        }
-
-        $results = HttpPromise\unwrap($promises);
-
-        $images = [];
-        foreach ($results as $index => $response) {
-            $body = $response->getBody();
-
-            $images[$index] = base64_encode($body);
-        }
-
-        return view('home', compact('images', 'imagesSize'));
     }
 }
