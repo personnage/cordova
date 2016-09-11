@@ -35,10 +35,12 @@ class HomeController extends Controller
      */
     public function index(PhotosSearchRequest $request)
     {
-        $photos = array_map(function ($item) {
-            $size = array_get($item, 'sizes');
+        $photos = array_map(function ($photo) {
+            $size = array_get($photo, 'sizes');
 
-            return $size[round(count($size) / 3)];
+            $photo['item'] = $size[round(count($size) / 3)];
+
+            return $photo;
 
         }, $this->flickr->search($request->all()));
 
