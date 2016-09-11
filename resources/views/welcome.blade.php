@@ -1,15 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  <title>Laravel</title>
-
-  <link rel="stylesheet" href="/css/app.css">
-  <link rel="stylesheet" href="/vendor/bower_components/font-awesome/css/font-awesome.css">
-</head>
+@include('layouts._head')
 <body>
   <div class="container position-ref">
     <div class="row">

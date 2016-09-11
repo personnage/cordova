@@ -1,25 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <!-- CSRF Token -->
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-
-    <title>Laravel</title>
-
-    <!-- Styles -->
-    <link href="/css/app.css" rel="stylesheet">
-
-    <!-- Scripts -->
-    <script>
-        window.Laravel = <?php echo json_encode([
-            'csrfToken' => csrf_token(),
-        ]); ?>
-    </script>
-</head>
+@include('layouts._head')
 <body>
     <nav class="navbar navbar-default navbar-static-top">
         <div class="container">
@@ -80,23 +61,8 @@
     @yield('content')
 
     <!-- Scripts -->
-    <script src="/js/app.js"></script>
-    <script src="/vendor/bower_components/freewall/freewall.js"></script>
+    <script src="{{ elixir('js/app.js') }}"></script>
 
-    <script>
-      var wall = new Freewall("#freewall");
-      wall.reset({
-        selector: '.cell',
-        animate: true,
-        cellW: 20,
-        cellH: 300,
-        onResize: function() {
-            wall.fitWidth();
-        }
-    });
-    wall.fitWidth();
-    // for scroll bar appear;
-    $(window).trigger("resize");
-    </script>
+    @stack('scripts')
 </body>
 </html>
