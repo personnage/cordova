@@ -3,8 +3,8 @@
 .env
 /node_modules
 /public/build
+/public/fonts
 /public/css
 /public/js
 /public/storage
-/public/vendor/bower_components
 /vendor
