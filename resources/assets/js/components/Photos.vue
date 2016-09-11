@@ -9,7 +9,7 @@
     >
       <div class="ctrl-panel">
         <div class="btn-group" role="group" aria-label="The photo ctrl panel...">
-          <button type="button" class="btn btn-link" data-toggle="modal" data-target="[data-modal-photo={{ photo.id }}]" @click="loadMap()">
+          <button type="button" class="btn btn-link" data-toggle="modal" data-target="[data-modal-photo={{ photo.id }}]" @click="loadMap(photo.id)">
             <i class="fa fa-arrows-alt" aria-hidden="true"></i>
           </button>
           <button type="button" class="btn btn-link">
@@ -24,7 +24,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title">{{ photo.title }}</h4>
+            <h4 class="modal-title">{{ photo.info.title }}</h4>
           </div>
 
           <div class="modal-body">
@@ -36,10 +36,10 @@
                   <dd>{{ photo.id }}</dd>
 
                   <dt>Title:</dt>
-                  <dd>{{ photo.title }}</dd>
+                  <dd>{{ photo.info.title }}</dd>
 
                   <dt>Uploaded:</dt>
-                  <dd>{{ photo.info.uploaded_at }}</dd>
+                  <dd>{{ photo.info.uploaded_at.date }}</dd>
                 </dl>
               </div>
 
@@ -51,7 +51,7 @@
               <!-- Footer -->
               <div class="panel-footer">
 
-                <div class="map"
+                <div class="map map-{{ photo.id }}"
                   data-maps-attr-lat="{{ photo.info.location.latitude }}"
                   data-maps-attr-lng="{{ photo.info.location.longitude }}"
                   data-maps-attr-title="{{ photo.info.title }}"
@@ -73,7 +73,7 @@
   </div>
 
   <div class="button-wrapper">
-    <button @click="loadPhotos" class="ladda-button" data-color="green" data-style="expand-left">
+    <button @click="loadPhotos()" class="ladda-button" data-color="green" data-style="expand-left">
       Load More!
     </button>
   </div>
@@ -96,56 +96,52 @@
       loadPhotos() {
         this.ladda.start();
 
-        this.$http.get('/photos?per_page=' + this.per_page + '&page=' + this.page++).then((response) => {
+        this.$http.get('/photos?page=' + this.page++).then((response) => {
+
           this.ladda.stop();
+
           this.photos = this.photos.concat(response.json());
 
           setTimeout(function() {
             this.wall.fitWidth();
           }.bind(this), 500);
+
         });
       },
 
-      loadMap() {
-        ymaps.ready(initMap);
+      loadMap(id) {
+          var map = [], myLatLng = [], placemark;
 
-        function initMap() {
-          var map, maps = [], myLatLng = [], placemark;
+          var elem = document.querySelector('.map-' + id);
 
-          document.querySelectorAll('.map').forEach(function (elem) {
-            myLatLng = [elem.dataset.mapsAttrLat, elem.dataset.mapsAttrLng];
+          myLatLng = [elem.dataset.mapsAttrLat, elem.dataset.mapsAttrLng];
 
-            map = new ymaps.Map(elem, {
-                center: myLatLng,
-                zoom: 5,
-                controls: ['smallMapDefaultSet'],
-            });
-
-            placemark = new ymaps.GeoObject({
-                // Описание геометрии.
-                geometry: {
-                    type: "Point",
-                    coordinates: map.getCenter()
-                },
-                // Свойства.
-                properties: {
-                    hintContent: elem.dataset.mapsAttrTitle || '',
-                    balloonContent: elem.dataset.mapsAttrContent || ''
-                }
-            }, {
-                // Опции.
-                // Иконка метки будет растягиваться под размер ее содержимого.
-                preset: 'islands#circleIcon',
-                // Метку можно перемещать.
-                draggable: true
-            });
-
-            map.geoObjects.add(placemark);
-
-            // maps.push(map);
+          map = new ymaps.Map(elem, {
+              center: myLatLng,
+              zoom: 5,
+              controls: ['smallMapDefaultSet'],
           });
-        }
-        //
+
+          placemark = new ymaps.GeoObject({
+              // Описание геометрии.
+              geometry: {
+                  type: "Point",
+                  coordinates: map.getCenter()
+              },
+              // Свойства.
+              properties: {
+                  hintContent: elem.dataset.mapsAttrTitle || '',
+                  balloonContent: elem.dataset.mapsAttrContent || ''
+              }
+          }, {
+              // Опции.
+              // Иконка метки будет растягиваться под размер ее содержимого.
+              preset: 'islands#circleIcon',
+              // Метку можно перемещать.
+              draggable: true
+          });
+
+          map.geoObjects.add(placemark);
       }
     },
 
@@ -162,6 +158,8 @@
         });
 
       this.ladda = Ladda.create(document.querySelector('.ladda-button'));
+
+      this.loadPhotos();
     }
   };
 </script>
