@@ -22,6 +22,7 @@ Route::get('/', function () {
     return view('welcome');
 })->middleware('App\Http\Middleware\RedirectIfAuthenticated');
 
+Route::get('home', 'FlickrController@index');
+Route::get('flickr', 'FlickrController@photos');
 
-Route::get('/home', 'HomeController@index');
-Route::get('/photos', 'HomeController@photos');
+Route::resource('photos', 'PhotoController');
