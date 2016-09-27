@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Tag;
 use App\Models\Photo;
+use App\Jobs\ProcessingExternalPhoto;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use App\Http\Requests\PhotoCreateRequest;
@@ -39,18 +41,29 @@ class PhotoController extends Controller
      */
     public function store(PhotoCreateRequest $request)
     {
-        $photo = $this->createPhoto($request->all());
+        $photo = $this->createPhotoInstance($request->all());
+
+        $photo->owner()->associate(auth()->user());
+
+        $photo->save();
 
         $tags = $this->createTags(explode(',', $request->tags));
 
         $photo->tags()->sync($tags->pluck('id')->toArray());
 
+        dispatch(new ProcessingExternalPhoto($photo));
+
         return $photo;
     }
 
-    protected function createPhoto(array $data): Photo
+    public function storeByFlickr(PhotoCreateRequest $request)
     {
-        return Photo::create([
+        //
+    }
+
+    protected function createPhotoInstance(array $data): Photo
+    {
+        return new Photo([
             'location' => $data['location'],
 
             'title' => array_get($data, 'title', ''),
