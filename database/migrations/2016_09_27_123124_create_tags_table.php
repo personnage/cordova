@@ -15,18 +15,13 @@ class CreateTagsTable extends Migration
     {
         Schema::create('tags', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('user_id')->index()->nullable();
-
-            $table->foreign('user_id')
-                ->references('id')
-                ->on('users')
-                ->onUpdate('cascade')
-                ->onDelete('set null');
-
             $table->string('name')->unique();
+            $table->string('slug');
+
+            $table->timestamps();
         });
 
-        foreach (['name',] as $attr) {
+        foreach (['name', 'slug',] as $attr) {
             Schema::getConnection()->statement(
                 sprintf('CREATE INDEX tags_%1$s_trigram ON tags USING gin (%1$s gin_trgm_ops);', $attr)
             );

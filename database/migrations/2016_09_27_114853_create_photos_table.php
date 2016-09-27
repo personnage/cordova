@@ -26,8 +26,8 @@ class CreatePhotosTable extends Migration
             $table->string('title')->default('');
             $table->text('description')->default('');
 
-            $table->string('provider');
-            $table->string('extern_id');
+            $table->string('provider')->nullable();
+            $table->string('extern_id')->nullable();
             $table->unique(['provider', 'extern_id']);
 
             $table->timestamps();
