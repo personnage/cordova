@@ -15,13 +15,19 @@ class CreatePhotosTable extends Migration
     {
         Schema::create('photos', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('user_id')->index()->nullable();
+            $table->integer('user_id')->index();
 
             $table->foreign('user_id')
                 ->references('id')
                 ->on('users')
                 ->onUpdate('cascade')
                 ->onDelete('set null');
+
+            // Surrogate string identifier.
+            $table->string('label');
+
+            // if server is null - photo not exist
+            $table->string('server')->index()->nullable();
 
             $table->string('title')->default('');
             $table->text('description')->default('');
