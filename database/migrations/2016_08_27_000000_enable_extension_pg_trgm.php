@@ -13,7 +13,11 @@ class EnableExtensionPgTrgm extends Migration
     public function up()
     {
         # https://www.postgresql.org/docs/9.5/static/textsearch-tables.html
-        Schema::getConnection()->statement('CREATE EXTENSION pg_trgm;');
+        Schema::getConnection()->statement('CREATE EXTENSION IF NOT EXISTS pg_trgm;');
+
+        # http://trac.osgeo.org/postgis/wiki/UsersWikiPostGIS22UbuntuPGSQL95Apt
+        Schema::getConnection()->statement('CREATE EXTENSION IF NOT EXISTS postgis;');
+        Schema::getConnection()->statement('CREATE EXTENSION IF NOT EXISTS pgrouting;');
     }
 
     /**
@@ -23,6 +27,6 @@ class EnableExtensionPgTrgm extends Migration
      */
     public function down()
     {
-        Schema::getConnection()->statement('DROP EXTENSION pg_trgm;');
+        //
     }
 }
