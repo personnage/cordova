@@ -59,12 +59,12 @@ abstract class FlickrRepositories
         return $this->getHttpClient()->getAsync('', compact('query'));
     }
 
-    protected function buildQuery(array $data = [])
+    protected function buildQuery(array $data = []): array
     {
         return array_merge($this->key(), $this->format(), $data);
     }
 
-    protected function unwrapResponse(ResponseInterface $response, bool $strict = true)
+    protected function unwrapResponse(ResponseInterface $response, bool $strict = true): array
     {
         $body = (string) $response->getBody();
         $result = unserialize($body);
