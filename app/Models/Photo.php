@@ -26,13 +26,26 @@ class Photo extends Model
     ];
 
     /**
-     * Get the user that owns the photo.
-     *
-     * @return [type] [description]
+     * @inheritdoc
      */
-    public function user()
+    protected static function boot()
     {
-        return $this->belongsTo(User::class);
+        parent::boot();
+
+        // Update some attributes before creating.
+        static::creating(function (Photo $photo) {
+            $photo->label = $photo->label ?? str_random(10);
+        });
+    }
+
+    /**
+     * Get owner (user) to currently news.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function owner()
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     /**
