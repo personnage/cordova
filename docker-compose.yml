@@ -30,7 +30,8 @@ services:
       - laravel:ro
 
   postgres:
-    image: postgres
+    build:
+      context: ./docker/postgres
     ports:
       - 5432:5432
     environment:
