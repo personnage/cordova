@@ -42,7 +42,7 @@ class CreateUsersTable extends Migration
 
         foreach (['name', 'email', 'username'] as $name) {
             Schema::getConnection()->statement(
-                sprintf('CREATE INDEX users_on_%1$s_trigram ON users USING gin (%1$s gin_trgm_ops);', $name)
+                sprintf('CREATE INDEX users_%1$s_trigram ON users USING gin (%1$s gin_trgm_ops);', $name)
             );
         }
     }
