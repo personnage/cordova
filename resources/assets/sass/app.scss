@@ -8,11 +8,17 @@
 // Bootstrap
 @import "node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
 
+// Bootstrap Material Design
+@import "node_modules/bootstrap-material-design/dist/css/bootstrap-material-design";
+
 // Font Awesome
 @import "node_modules/font-awesome/scss/font-awesome";
 
 // Ladda
 @import "node_modules/ladda/css/ladda-themed";
+
+// SelectizeJS
+@import "node_modules/selectize/dist/css/selectize";
 
 // Application
 @import "main";

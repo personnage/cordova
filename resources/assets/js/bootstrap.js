@@ -8,7 +8,11 @@ window._ = require('lodash');
  */
 
 window.$ = window.jQuery = require('jquery');
+
+require('selectize');
 require('bootstrap-sass');
+require('bootstrap-material-design');
+
 window.Freewall = require('freewall').Freewall;
 window.Ladda = require('ladda');
 

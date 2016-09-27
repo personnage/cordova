@@ -16,7 +16,7 @@
 
                 <!-- Branding Image -->
                 <a class="navbar-brand" href="{{ url('/') }}">
-                    Laravel
+                    Teleport.me
                 </a>
             </div>
 

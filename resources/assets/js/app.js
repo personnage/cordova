@@ -6,6 +6,7 @@
  */
 
 require('./bootstrap');
+require('./material');
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -15,7 +16,10 @@ require('./bootstrap');
 
 Vue.component('example', require('./components/Example.vue'));
 
-Vue.component('photos', require('./components/Photos.vue'));
+Vue.component(
+    'photos',
+    require('./components/Photos.vue')
+);
 
 Vue.component(
     'passport-clients',
