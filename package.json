@@ -20,6 +20,8 @@
     "font-awesome": "^4.6.3",
     "freewall": "^1.0.8",
     "ladda": "^1.0.0",
+    "laravel-echo": "^1.0.5",
+    "pusher-js": "^3.2.1",
     "selectize": "^0.12.3"
   }
 }
