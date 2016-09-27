@@ -16,8 +16,10 @@
     "vue-resource": "^0.9.3"
   },
   "dependencies": {
+    "bootstrap-material-design": "^0.5.10",
     "font-awesome": "^4.6.3",
     "freewall": "^1.0.8",
-    "ladda": "^1.0.0"
+    "ladda": "^1.0.0",
+    "selectize": "^0.12.3"
   }
 }
