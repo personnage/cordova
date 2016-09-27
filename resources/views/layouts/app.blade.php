@@ -63,6 +63,13 @@
     <!-- Scripts -->
     <script src="{{ elixir('js/app.js') }}"></script>
 
+    <script>
+        Echo.private('processing-photo-channel.' + {{ auth()->id() }})
+            .listen('ProcessingPhotoComplete', function (e) {
+                console.log(e);
+            });
+    </script>
+
     @stack('scripts')
 </body>
 </html>
