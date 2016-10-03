@@ -34,6 +34,7 @@ class FlickrController extends Controller
     public function index(FlickrSearchRequest $request)
     {
         // return $this->photos($request);
+        // return $this->photos->sizes(29967627245);
 
         return view('home.index');
     }

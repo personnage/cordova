@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use DB;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Photo extends Model
@@ -24,6 +25,8 @@ class Photo extends Model
     protected $fillable = [
         'title', 'description', 'provider', 'extern_id', 'location',
     ];
+
+    protected $hidden = ['location'];
 
     /**
      * @inheritdoc
@@ -56,6 +59,14 @@ class Photo extends Model
         return $this->morphToMany(Tag::class, 'taggable');
     }
 
+    public function newQuery()
+    {
+        $x = 'ST_X(ST_AsText(location)) as latitude';
+        $y = 'ST_Y(ST_AsText(location)) as longitude';
+
+        return parent::newQuery()->addSelect('*', DB::raw(join(',', compact('x', 'y'))));
+    }
+
     /**
      * Set the user's first name.
      *
@@ -69,5 +80,42 @@ class Photo extends Model
         $this->attributes['location'] = DB::raw(
             "ST_GeographyFromText('SRID=4326;POINT({$latitude} {$longitude})')"
         );
+    }
+
+    /**
+     * Scope a query to only include photos match to title or desc attr.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @param  string                                $name
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeSearch(Builder $query, string $name): Builder
+    {
+        return $query->where('title', 'ILIKE', "%$name%")
+             ->orWhere('description', 'ILIKE', "%$name%");
+    }
+
+    /**
+     * Scope a query apply sort to query.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @param  string                                $sortName
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeSort(Builder $query, string $sortName): Builder
+    {
+        switch ($sortName) {
+            case 'name_asc':
+                return $query->orderBy('name', 'asc');
+            case 'updated_asc':
+                return $query->orderBy('updated_at', 'asc');
+            case 'updated_desc':
+                return $query->orderBy('updated_at', 'desc');
+            case 'id_asc':
+                return $query->orderBy('id', 'asc');
+            case 'id_desc':
+            default:
+                return $query->orderBy('id', 'desc');
+        }
     }
 }

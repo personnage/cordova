@@ -60,6 +60,8 @@ class FlickrPhotosRepositories extends FlickrRepositories
 
     public function search(array $options = []): array
     {
+        $options['text'] = $options['message'];
+
         $promise = $this->searchAsync($options);
 
         return $this->transformPhotos(

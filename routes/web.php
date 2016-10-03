@@ -24,5 +24,3 @@ Route::get('/', function () {
 
 Route::get('home', 'FlickrController@index');
 Route::get('flickr', 'FlickrController@photos');
-
-Route::resource('photos', 'PhotoController');

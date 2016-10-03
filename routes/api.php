@@ -27,3 +27,9 @@ Route::group(['namespace' => 'Api'], function () {
     Route::patch('users/{user}/unblock', 'UsersController@unblock')->name('users.unblock');
     Route::resource('users', 'UsersController', ['except' => ['create', 'edit']]);
 });
+
+Route::group(['namespace' => 'Api'], function () {
+    Route::patch('photos/{photo}/delete', 'PhotosController@delete')->name('photos.delete');
+    Route::patch('photos/{photo}/restore', 'PhotosController@restore')->name('photos.restore');
+    Route::resource('photos', 'PhotosController', ['except' => ['create', 'edit']]);
+});

@@ -264,7 +264,7 @@
       store: function(event) {
         var body = new FormData(document.getElementById('store'));
 
-        this.$http.post('/photos', body).then((response) => {
+        this.$http.post('/api/photos', body).then((response) => {
           console.log('pass');
           console.log(response);
           console.log(response.json());
