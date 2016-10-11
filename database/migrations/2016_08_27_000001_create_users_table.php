@@ -19,6 +19,7 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();
+            $table->softDeletes();
 
             $table->integer('sign_in_count')->default(0);
             $table->string('current_sign_in_at')->nullable();
@@ -26,15 +27,14 @@ class CreateUsersTable extends Migration
             $table->string('current_sign_in_ip')->nullable();
             $table->string('last_sign_in_ip')->nullable();
 
+            $table->integer('failed_attempts')->default(0);
+
             $table->string('name')->nullable()->index();
             $table->boolean('admin')->default(false)->index();
 
-            $table->softDeletes();
-            $table->integer('failed_attempts')->default(0);
-
-            $table->string('extern_uid')->nullable();
             $table->string('provider')->nullable();
-            $table->unique(['extern_uid', 'provider']);
+            $table->string('extern_uid')->nullable();
+            $table->unique(['provider', 'extern_uid']);
             $table->string('username')->nullable()->index();
 
             $table->integer('created_by_id')->nullable();

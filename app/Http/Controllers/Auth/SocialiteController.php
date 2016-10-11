@@ -56,8 +56,8 @@ class SocialiteController extends Controller
     protected function findOrCreateProviderUser(string $provider, SocialiteUser $externUser)
     {
         $user = User::firstOrNew([
-            'extern_uid' => $externUser->getId(),
             'provider' => $provider,
+            'extern_uid' => $externUser->getId(),
         ]);
 
         if ($user->exists) {

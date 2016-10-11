@@ -80,6 +80,16 @@ class User extends Authenticatable
     }
 
     /**
+     * Get a tags associated with the user.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function tags()
+    {
+        return $this->hasMany(Tag::class);
+    }
+
+    /**
      * Scope a query to only include users match to name, username or email attr.
      *
      * @param  \Illuminate\Database\Eloquent\Builder $query

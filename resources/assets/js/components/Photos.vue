@@ -34,8 +34,8 @@
           <form v-on:submit.prevent="search" role="form" id="search" class="bs-component" accept-charset="utf-8" method="get" autocomplete="off">
 
             <div class="form-group label-floating is-empty">
-              <label class="control-label" for="message">A free text search...</label>
-              <input id="message" class="form-control" type="search" name="message">
+              <label class="control-label" for="text">A free text search...</label>
+              <input id="text" class="form-control" type="search" name="text">
               <p class="help-block">Photos who's title, description or tags contain the text will be returned.</p>
             </div>
 

@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use DB;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -23,10 +22,8 @@ class Photo extends Model
      * @var array
      */
     protected $fillable = [
-        'title', 'description', 'provider', 'extern_id', 'location',
+        'title', 'description', 'provider', 'extern_id',
     ];
-
-    protected $hidden = ['location'];
 
     /**
      * @inheritdoc
@@ -42,7 +39,7 @@ class Photo extends Model
     }
 
     /**
-     * Get owner (user) to currently news.
+     * Get owner (user) to currently photo.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
@@ -59,27 +56,12 @@ class Photo extends Model
         return $this->morphToMany(Tag::class, 'taggable');
     }
 
-    public function newQuery()
-    {
-        $x = 'ST_X(ST_AsText(location)) as latitude';
-        $y = 'ST_Y(ST_AsText(location)) as longitude';
-
-        return parent::newQuery()->addSelect('*', DB::raw(join(',', compact('x', 'y'))));
-    }
-
     /**
-     * Set the user's first name.
-     *
-     * @param  array  $value
-     * @return void
+     * Get the location to photo.
      */
-    public function setLocationAttribute(array $value)
+    public function location()
     {
-        list($latitude, $longitude) = array_values($value);
-
-        $this->attributes['location'] = DB::raw(
-            "ST_GeographyFromText('SRID=4326;POINT({$latitude} {$longitude})')"
-        );
+        return $this->hasOne(PhotoLocation::class);
     }
 
     /**

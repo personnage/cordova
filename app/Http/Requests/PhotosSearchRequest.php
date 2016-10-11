@@ -13,6 +13,7 @@ class PhotosSearchRequest extends FormRequest
      */
     public function authorize()
     {
+        return true;
         return !! auth()->user();
     }
 
@@ -24,7 +25,16 @@ class PhotosSearchRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            // Include advanced information.
+            'include_tags' => 'in:1,0',
+            'include_owner' => 'in:1,0',
+            'include_location' => 'in:1,0',
+
+            'tags' => 'string',
+            'tag_mode' => 'in:or', // and/or
+
+            'page' => 'integer',
+            'per_page' => 'integer|max:250',
         ];
     }
 }
