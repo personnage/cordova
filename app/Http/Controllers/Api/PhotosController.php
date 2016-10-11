@@ -188,7 +188,8 @@ class PhotosController extends Controller
                     'height' => 300, // stub
 
                     'source' => sprintf(
-                        'http://static.cordova.app/photos/%s/%d_%s.jpg',
+                        '%s/photos/%s/%d_%s.jpg',
+                        env('APP_STATIC_URL'),
                         $photo['server'],
                         $photo['id'],
                         $photo['label']
