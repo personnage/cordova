@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use DB;
 use App\Models\Tag;
+use App\Models\User;
 use App\Models\Photo;
 use App\Models\PhotoLocation;
 use App\Jobs\ProcessingExternalPhoto;
@@ -11,6 +12,7 @@ use App\Http\Requests\PhotoCreateRequest;
 use App\Http\Requests\PhotosSearchRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Builder;
 
 class PhotosController extends Controller
 {
@@ -27,29 +29,19 @@ class PhotosController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * tags=
-     * tag_mode=
-     *
-     * include_tags=true
-     * include_owner=false
-     * include_location=yes
-     *
-     * sort=
-     * page=
-     * per_page=
-     * search=
-     *
-     * @return \Illuminate\Http\Response
+     * @return array
      */
-    public function index(PhotosSearchRequest $request)
+    public function index(PhotosSearchRequest $request): array
     {
-        // 1) Если получен список тегов, выполним поиск тегов
-        // if ($request->has('tags')) {
-        //     $tagsIds = Tag::select('id')->search(explode(',', $request->tags))->pluck('id');
-        // }
-
-        // Create fresh builder.
-        $photos = Photo::query();
+        if ($request->has('tags')) {
+            // Search photo by tags.
+            $photos = Photo::whereHas('tags', function (Builder $query) use ($request) {
+                $query->search(explode(',', $request->tags));
+            });
+        } else {
+            // Create fresh builder.
+            $photos = Photo::query();
+        }
 
         // Apply filter by title and/or description.
         if ($request->has('search')) {
@@ -60,19 +52,29 @@ class PhotosController extends Controller
             $photos = $photos->with('tags');
         }
 
+        if ($request->include_owner = (bool) $request->include_owner) {
+            $photos = $photos->with('owner');
+        }
+
         if ($request->include_location = (bool) $request->include_location) {
             $photos = $photos->with('location');
         }
 
         $photos = $photos->sort((string) $request->input('sort'));
-
         $photos = $photos->simplePaginate($request->input('per_page') ?? 20);
 
-        // return $photos;
-        return $this->transformPhotos($photos->items(), [
-            'include_tags' => $request->include_tags,
-            'include_location' => $request->include_location,
-        ]);
+        return [
+            'current_page' => (int) $photos->currentPage(),
+            'per_page' => (int) $photos->perPage(),
+            'from' =>  (int) $photos->firstItem(),
+            'to' =>  (int) $photos->lastItem(),
+
+            'data' => $this->transformPhotos($photos->items(), [
+                'include_tags' => $request->include_tags,
+                'include_owner' => $request->include_owner,
+                'include_location' => $request->include_location
+            ]),
+        ];
     }
 
     /**
@@ -162,6 +164,13 @@ class PhotosController extends Controller
         //
     }
 
+    /**
+     * Transform raw output photos to pretty print.
+     *
+     * @param  array  $photos
+     * @param  array  $options include_tags|include_owner|include_location
+     * @return array
+     */
     protected function transformPhotos(array $photos, array $options = []): array {
         return array_map(function (Photo $photo) use($options) : array {
             $item = [
@@ -173,6 +182,20 @@ class PhotosController extends Controller
 
                 'title' => $photo['title'],
                 'description' => $photo['description'],
+
+                'photo' => [
+                    'width' => 200,  // stub
+                    'height' => 300, // stub
+
+                    'source' => sprintf(
+                        'http://static.cordova.app/photos/%s/%d_%s.jpg',
+                        $photo['server'],
+                        $photo['id'],
+                        $photo['label']
+                    ),
+
+                    'extension' => 'jpg', // stub
+                ],
 
                 'created_at' => [
                     'timestamp' => $photo['created_at']->timestamp,
@@ -189,6 +212,10 @@ class PhotosController extends Controller
                 $item['tags'] = $this->transformTags($photo->tags->all());
             }
 
+            if (isset($options['include_owner']) && $options['include_owner']) {
+                $item['owner'] = $this->transformOwner($photo->owner);
+            }
+
             if (isset($options['include_location']) && $options['include_location']) {
                 $item['location'] = $photo->location;
             }
@@ -197,6 +224,12 @@ class PhotosController extends Controller
         }, $photos);
     }
 
+    /**
+     * Transform raw output tags to pretty print.
+     *
+     * @param  array  $tags
+     * @return array
+     */
     protected function transformTags(array $tags): array
     {
         return array_map(function (Tag $tag): array {
@@ -218,6 +251,21 @@ class PhotosController extends Controller
                 ],
             ];
         }, $tags);
+    }
+
+    /**
+     * Transform raw output owner to pretty print.
+     *
+     * @param  User   $owner
+     * @return array
+     */
+    protected function transformOwner(User $owner)
+    {
+        return [
+            'id' => $owner['id'],
+            'name' => $owner['name'],
+            'username' => $owner['username'],
+        ];
     }
 
     protected function createPhotoInstance(array $data): Photo
