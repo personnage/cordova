@@ -260,7 +260,7 @@ class PhotosController extends Controller
      * @param  User   $owner
      * @return array
      */
-    protected function transformOwner(User $owner)
+    protected function transformOwner(User $owner): array
     {
         return [
             'id' => $owner['id'],
