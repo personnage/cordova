@@ -26,9 +26,11 @@ class PhotosSearchRequest extends FormRequest
     {
         return [
             // Include advanced information.
-            'include_tags' => 'in:1,0',
-            'include_owner' => 'in:1,0',
+            'include_comments' => 'in:1,0',
+            'include_likes' => 'in:1,0',
             'include_location' => 'in:1,0',
+            'include_owner' => 'in:1,0',
+            'include_tags' => 'in:1,0',
 
             'tags' => 'string',
             'tag_mode' => 'in:or', // and/or
