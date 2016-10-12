@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class EnableExtensionPgTrgm extends Migration
+class Init extends Migration
 {
     /**
      * Run the migrations.
@@ -18,6 +18,8 @@ class EnableExtensionPgTrgm extends Migration
         # http://trac.osgeo.org/postgis/wiki/UsersWikiPostGIS22UbuntuPGSQL95Apt
         Schema::getConnection()->statement('CREATE EXTENSION IF NOT EXISTS postgis;');
         Schema::getConnection()->statement('CREATE EXTENSION IF NOT EXISTS pgrouting;');
+
+
     }
 
     /**
