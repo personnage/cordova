@@ -65,6 +65,22 @@ class Photo extends Model
     }
 
     /**
+     * Get all of the photos comments.
+     */
+    public function comments()
+    {
+        return $this->morphMany(Comment::class, 'commentable');
+    }
+
+    /**
+     * Get all of the photos likes.
+     */
+    public function likes()
+    {
+        return $this->morphMany(Like::class, 'likeable');
+    }
+
+    /**
      * Scope a query to only include photos match to title or desc attr.
      *
      * @param  \Illuminate\Database\Eloquent\Builder $query
