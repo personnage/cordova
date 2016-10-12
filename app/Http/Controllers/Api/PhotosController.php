@@ -3,16 +3,19 @@
 namespace App\Http\Controllers\Api;
 
 use DB;
-use App\Models\Tag;
-use App\Models\User;
-use App\Models\Photo;
-use App\Models\PhotoLocation;
-use App\Jobs\ProcessingExternalPhoto;
 use App\Http\Requests\PhotoCreateRequest;
 use App\Http\Requests\PhotosSearchRequest;
+use App\Jobs\ProcessingExternalPhoto;
+use App\Models\Comment;
+use App\Models\Like;
+use App\Models\Photo;
+use App\Models\PhotoLocation;
+use App\Models\Tag;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
-use Illuminate\Database\Eloquent\Builder;
 
 class PhotosController extends Controller
 {
@@ -23,7 +26,7 @@ class PhotosController extends Controller
      */
     public function __construct()
     {
-        // $this->middleware('auth:api');
+        $this->middleware('auth:api');
     }
 
     /**
@@ -48,17 +51,8 @@ class PhotosController extends Controller
             $photos = $photos->search($request->input('search'));
         }
 
-        if ($request->include_tags = (bool) $request->include_tags) {
-            $photos = $photos->with('tags');
-        }
-
-        if ($request->include_owner = (bool) $request->include_owner) {
-            $photos = $photos->with('owner');
-        }
-
-        if ($request->include_location = (bool) $request->include_location) {
-            $photos = $photos->with('location');
-        }
+        // Include advanced entity.
+        $this->includeEntity($request, $photos);
 
         $photos = $photos->sort((string) $request->input('sort'));
         $photos = $photos->simplePaginate($request->input('per_page') ?? 20);
@@ -70,11 +64,43 @@ class PhotosController extends Controller
             'to' =>  (int) $photos->lastItem(),
 
             'data' => $this->transformPhotos($photos->items(), [
-                'include_tags' => $request->include_tags,
-                'include_owner' => $request->include_owner,
-                'include_location' => $request->include_location
+                'include_comments' => (bool) $request->include_comments,
+                'include_likes' => (bool) $request->include_likes,
+                'include_location' => (bool) $request->include_location,
+                'include_owner' => (bool) $request->include_owner,
+                'include_tags' => (bool) $request->include_tags,
             ]),
         ];
+    }
+
+    /**
+     * Add answer additional entities, such as location or tags.
+     *
+     * @param  Request $request
+     * @param  Builder $builder
+     * @return void
+     */
+    protected function includeEntity(Request $request, Builder $builder)
+    {
+        foreach (['location', 'owner', 'tags'] as $entity) {
+            if ((bool) $request->get($entity)) {
+                $builder = $builder->with($entity);
+            }
+        }
+
+        if ((bool) $request->include_comments) {
+            $builder = $builder->with(['comments' => function (MorphMany $query) {
+                $query->limit(10);
+            }]);
+        }
+
+        if ((bool) $request->include_likes) {
+            $builder = $builder->with(['likes' => function (MorphMany $query) {
+                $query->limit(10);
+            }]);
+
+            $builder = $builder->withCount('likes');
+        }
     }
 
     /**
@@ -213,6 +239,19 @@ class PhotosController extends Controller
                 $item['tags'] = $this->transformTags($photo->tags->all());
             }
 
+            if (isset($options['include_comments']) && $options['include_comments']) {
+                $item['comments'] = [
+                    'latest' => $this->transformComments($photo->comments->all()),
+                ];
+            }
+
+            if (isset($options['include_likes']) && $options['include_likes']) {
+                $item['likes'] = [
+                    'count' => $photo->likes_count,
+                    'latest' => $this->transformLikes($photo->likes->all()),
+                ];
+            }
+
             if (isset($options['include_owner']) && $options['include_owner']) {
                 $item['owner'] = $this->transformOwner($photo->owner);
             }
@@ -223,6 +262,38 @@ class PhotosController extends Controller
 
             return $item;
         }, $photos);
+    }
+
+    protected function transformComments(array $comments): array
+    {
+        return array_map(function (Comment $comment): array {
+            return [
+                'id' => $comment['id'],
+                'author_id' => $comment['user_id'],
+
+                'content' => $comment['body'],
+
+                'created_at' => [
+                    'timestamp' => $comment['created_at']->timestamp,
+                    'to_string' => $comment['created_at']->toDayDateTimeString(),
+                ],
+
+                'updated_at' => [
+                    'timestamp' => $comment['updated_at']->timestamp,
+                    'to_string' => $comment['updated_at']->toDayDateTimeString(),
+                ],
+            ];
+        }, $comments);
+    }
+
+    protected function transformLikes(array $likes): array
+    {
+        return array_map(function (Like $like): array {
+            return [
+                'id' => $like['id'],
+                'author_id' => $like['user_id']
+            ];
+        }, $likes);
     }
 
     /**
@@ -285,11 +356,17 @@ class PhotosController extends Controller
         $tags = [];
 
         foreach (array_filter($items) as $name) {
-            $tags []= Tag::firstOrCreate([
+            $tag = Tag::firstOrNew([
                 'name' => $name,
                 'slug' => str_slug($name),
             ]);
-            //! $tag->author()->associate(auth()->user());
+
+            if (!$tag->exists || !$tag->author) {
+                $tag->author()->associate(auth()->user());
+                $tag->save();
+            }
+
+            $tags[]= $tag;
         }
 
         return collect($tags);
