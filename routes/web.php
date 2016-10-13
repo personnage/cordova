@@ -24,3 +24,11 @@ Route::get('/', function () {
 
 Route::get('home', 'FlickrController@index');
 Route::get('flickr', 'FlickrController@photos');
+
+Route::get('google', function (\App\Repositories\GoogleGeocodingRepositories $repo) {
+    // $result = $repo->findByPoint('55.790465', '37.589542'); Moscow
+    // return $repo->findByPoint('36.118561', '-115.187090');
+    return $repo->findByPoint('36.118561', '-64.81291');
+
+    dd($result);
+});
