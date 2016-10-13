@@ -80,7 +80,7 @@ class FlickrPhotosRepositories extends FlickrRepositories
     {
         return array_map(function (array $item): array {
             return [
-                'id' => (int) $item['id'],
+                'id' => $item['id'], // as string. id must be diff to providers.
                 'owner_id' => $item['owner'],
 
                 'title' => (string) $item['title'],
@@ -95,7 +95,7 @@ class FlickrPhotosRepositories extends FlickrRepositories
         }, $photos);
     }
 
-    public function info(int $photoId): array
+    public function info(string $photoId): array
     {
         $promise = $this->infoAsync($photoId);
 
@@ -104,7 +104,7 @@ class FlickrPhotosRepositories extends FlickrRepositories
         );
     }
 
-    public function infoAsync(int $photoId): Promise
+    public function infoAsync(string $photoId): Promise
     {
         $query = $this->buildQuery([
             'method' => $this->resolveMethod('getInfo'),
@@ -164,7 +164,7 @@ class FlickrPhotosRepositories extends FlickrRepositories
         ];
     }
 
-    public function sizes(int $photoId): array
+    public function sizes(string $photoId): array
     {
         $promise = $this->sizesAsync($photoId);
 
@@ -173,7 +173,7 @@ class FlickrPhotosRepositories extends FlickrRepositories
         );
     }
 
-    public function sizesAsync(int $photoId): Promise
+    public function sizesAsync(string $photoId): Promise
     {
         $query = $this->buildQuery([
             'method' => $this->resolveMethod('getSizes'),
