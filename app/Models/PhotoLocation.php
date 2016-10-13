@@ -19,7 +19,7 @@ class PhotoLocation extends Model
      * @var array
      */
     protected $fillable = [
-        'city', 'location',
+        'location', 'city', // ...
     ];
 
     protected $hidden = ['location'];
@@ -36,10 +36,13 @@ class PhotoLocation extends Model
 
     public function newQuery()
     {
-       $x = 'ST_X(ST_AsText(location)) as latitude';
-       $y = 'ST_Y(ST_AsText(location)) as longitude';
+        // This is query return POINT(36.118561 -64.81291)
+        // select ST_AsText( ST_GeographyFromText('SRID=4326;POINT(36.118561 -115.187090)') );
 
-       return parent::newQuery()->addSelect('*', DB::raw(join(',', compact('x', 'y'))));
+        $x = 'ST_X(ST_AsText(location)) as latitude';
+        $y = 'ST_Y(ST_AsText(location)) as longitude';
+
+        return parent::newQuery()->addSelect('*', DB::raw(join(',', compact('x', 'y'))));
     }
 
     /**
@@ -50,7 +53,12 @@ class PhotoLocation extends Model
     */
     public function setLocationAttribute(array $value)
     {
-       list($latitude, $longitude) = array_values($value);
+        if (array_key_exists('latitude', $value) && array_key_exists('longitude', $value)) {
+            $latitude = $value['latitude'];
+            $longitude = $value['longitude'];
+        } else {
+            list($latitude, $longitude) = array_values($value);
+        }
 
        $this->attributes['location'] = DB::raw(
            "ST_GeographyFromText('SRID=4326;POINT({$latitude} {$longitude})')"
