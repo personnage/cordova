@@ -23,12 +23,10 @@ class CreatePhotoLocationsTable extends Migration
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
 
-            $table->string('city')->nullable();
+            $table->string('place_id')->nullable();
+            $table->string('location'); // add location as string. after convert to point.
+            $table->string('location_type', 100)->nullable();
         });
-
-        Schema::getConnection()->statement(
-            'ALTER TABLE photo_locations ADD location GEOGRAPHY(POINT,4326) NOT NULL;'
-        );
     }
 
     /**
