@@ -7,7 +7,7 @@ use RuntimeException;
 use GuzzleHttp\Client as HttpClient;
 use Psr\Http\Message\ResponseInterface;
 
-class GeocodingGoogleRepositories
+class GoogleGeocodingRepositories implements GeocodingRepositories
 {
     /**
      * Ошибок нет, адрес обработан и получен хотя бы один геокод.
@@ -87,17 +87,23 @@ class GeocodingGoogleRepositories
         return 'json';
     }
 
+    protected function language($return = null): string
+    {
+        return $return ?? 'en';
+    }
+
     protected function toArray(ResponseInterface $response): array
     {
         return json_decode(strval($response->getBody()), true, 32);
     }
 
-    public function findByLocation(string $latitude, string $longitude): array
+    public function findByPoint(string $latitude, string $longitude): array
     {
         $response = $this->getHttpClient()->get($this->format(), [
             'query' => [
                 'key' => $this->key(),
                 'latlng' => "{$latitude},{$longitude}",
+                'language' => $this->language(),
             ]
         ]);
 
@@ -106,7 +112,9 @@ class GeocodingGoogleRepositories
         try {
             $this->checkStatus($output['status']);
         } catch (Exception $e) {
-            throw new RuntimeException('New message...', 1, $e);
+            throw new RuntimeException(
+                $output['error_message'] ?? 'New message...', 1, $e
+            );
         }
 
         return $this->transform($output['results']);
@@ -116,14 +124,20 @@ class GeocodingGoogleRepositories
     {
         $first = head($input);
 
-        return $first;
-
         foreach ($first['address_components'] as $component) {
-            # code...
+            // body
         }
 
         return [
             'place_id' => $first['place_id'],
+            'location' => [
+                'latitude' => $first['geometry']['location']['lat'],
+                'longitude' => $first['geometry']['location']['lng'],
+            ],
+            // ROOFTOP, RANGE_INTERPOLATED, GEOMETRIC_CENTER, APPROXIMATE
+            // https://developers.google.com/maps/documentation/geocoding/intro?hl=ru#Results
+            'location_type' => $first['geometry']['location_type'],
+
             'formatted_address' =>$first['formatted_address'],
         ];
     }
@@ -131,7 +145,11 @@ class GeocodingGoogleRepositories
     protected function checkStatus(string $status): bool
     {
         switch ($status) {
+            case static::ZERO_RESULTS:
+            case static::OVER_QUERY_LIMIT:
+            case static::REQUEST_DENIED:
             case static::INVALID_REQUEST:
+            case static::UNKNOWN_ERROR:
                 throw new Exception('Error Processing Request');
 
             case static::OK:
