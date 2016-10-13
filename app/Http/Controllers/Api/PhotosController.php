@@ -123,9 +123,11 @@ class PhotosController extends Controller
         $tags = $this->createTags(explode(',', $request->tags));
 
         $photo->tags()->sync($tags->pluck('id')->toArray());
-        DB::commit();
 
+        // Execute processing to external photo: download, apply geocoding...
         dispatch(new ProcessingExternalPhoto($photo));
+
+        DB::commit();
 
         // 201
         return $photo;
@@ -340,17 +342,29 @@ class PhotosController extends Controller
         ];
     }
 
+    /**
+     * Create new Photo instance and return.
+     *
+     * @param  array  $data
+     * @return Photo
+     */
     protected function createPhotoInstance(array $data): Photo
     {
         return new Photo([
-            'title' => array_get($data, 'title', ''),
-            'description' => array_get($data, 'description', ''),
+            'title' => $data['title'] ?? '',
+            'description' => $data['description'] ?? '',
 
-            'provider' => array_get($data, 'provider', null),
-            'extern_id' => array_get($data, 'extern_id', null),
+            'provider' => $data['provider'] ?? null,
+            'extern_id' => $data['extern_id'] ?? null,
         ]);
     }
 
+    /**
+     * Create new tags if it's not exists.
+     *
+     * @param  array  $items
+     * @return Collection
+     */
     protected function createTags(array $items): Collection
     {
         $tags = [];
