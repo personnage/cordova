@@ -60,8 +60,7 @@ class ProcessingExternalPhoto implements ShouldQueue
                 return new FlickrPhotosRepositories;
 
             default:
-                // throw new Exception("Repositories not found", 404);
-                break;
+                throw new Exception("Repositories not found", 404);
         }
     }
 
