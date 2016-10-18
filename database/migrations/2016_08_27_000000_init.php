@@ -18,8 +18,6 @@ class Init extends Migration
         # http://trac.osgeo.org/postgis/wiki/UsersWikiPostGIS22UbuntuPGSQL95Apt
         Schema::getConnection()->statement('CREATE EXTENSION IF NOT EXISTS postgis;');
         Schema::getConnection()->statement('CREATE EXTENSION IF NOT EXISTS pgrouting;');
-
-
     }
 
     /**

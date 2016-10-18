@@ -22,10 +22,6 @@ class CreatePhotoLocationsTable extends Migration
                 ->on('photos')
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
-
-            $table->string('place_id')->nullable();
-            $table->string('location'); // add location as string. after convert to point.
-            $table->string('location_type', 100)->nullable();
         });
     }
 

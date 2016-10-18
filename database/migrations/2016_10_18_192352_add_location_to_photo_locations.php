@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AlterLocationToPhotoLocations extends Migration
+class AddLocationToPhotoLocations extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,10 @@ class AlterLocationToPhotoLocations extends Migration
      */
     public function up()
     {
+        // http://postgis.net/docs/AddGeometryColumn.html
         Schema::getConnection()->statement(
-            'ALTER TABLE photo_locations ALTER COLUMN location TYPE GEOGRAPHY(POINT,4326) USING location::GEOGRAPHY(POINT,4326);'
+            "SELECT AddGeometryColumn ('public','photo_locations','location',4326,'POINT',2);"
         );
-
-        // CREATE INDEX global_points_gix ON photo_locations USING GIST (location);
     }
 
     /**
@@ -27,8 +26,9 @@ class AlterLocationToPhotoLocations extends Migration
      */
     public function down()
     {
+        // http://postgis.net/docs/DropGeometryColumn.html
         Schema::getConnection()->statement(
-            'ALTER TABLE photo_locations ALTER COLUMN location TYPE VARCHAR USING location::VARCHAR;'
+            "SELECT DropGeometryColumn ('public','photo_locations','location');"
         );
     }
 }
