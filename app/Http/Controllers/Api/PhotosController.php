@@ -90,13 +90,15 @@ class PhotosController extends Controller
 
         if ((bool) $request->include_comments) {
             $builder = $builder->with(['comments' => function (MorphMany $query) {
-                $query->limit(10);
+                $query->limit(3);
             }]);
+
+            $builder = $builder->withCount('comments');
         }
 
         if ((bool) $request->include_likes) {
             $builder = $builder->with(['likes' => function (MorphMany $query) {
-                $query->limit(10);
+                $query->limit(3);
             }]);
 
             $builder = $builder->withCount('likes');
