@@ -1,5 +1,5 @@
 FROM nginx:stable
-MAINTAINER Kirill Lyubaev <k.lyubaev@404-group.info>
+MAINTAINER Kirill Lyubaev <lubaev.ka@gmail.com>
 
 RUN { \
     echo 'server {'; \

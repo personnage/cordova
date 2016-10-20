@@ -1,5 +1,5 @@
 FROM node
-MAINTAINER Kirill Lyubaev <k.lyubaev@404-group.info>
+MAINTAINER Kirill Lyubaev <lubaev.ka@gmail.com>
 
 # https://laracasts.com/discuss/channels/general-discussion/gulp-notify-error-in-notifier-error-in-plugin-gulp-notify-not-found-notify-send
 RUN apt-get update -y \

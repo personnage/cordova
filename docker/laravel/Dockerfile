@@ -1,5 +1,5 @@
 FROM php:7-fpm
-MAINTAINER Kirill Lyubaev <k.lyubaev@404-group.info>
+MAINTAINER Kirill Lyubaev <lubaev.ka@gmail.com>
 
 RUN apt-get update -y \
     && apt-get install -y --no-install-recommends \
