@@ -1,0 +1,124 @@
+
+// Fonts
+@import url(https://fonts.googleapis.com/css?family=Raleway:100,300,400,600);
+@import url(https://fonts.googleapis.com/css?family=Roboto:100,300,400);
+
+// Variables
+@import "variables";
+
+// Bootstrap
+@import "node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
+
+// Bootstrap Material Design
+@import "node_modules/bootstrap-material-design/dist/css/bootstrap-material-design";
+
+// Font Awesome
+@import "node_modules/font-awesome/scss/font-awesome";
+
+// Ladda
+@import "node_modules/ladda/css/ladda-themed";
+
+// SelectizeJS
+@import "node_modules/selectize/dist/css/selectize";
+
+// Application
+@import "main";
+
+body {
+  padding-top: 50px;
+}
+
+.str-truncated {
+  display: inline-block;
+  max-width: 60%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: top;
+}
+
+.sub-header {
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.navbar-fixed-top {
+  border: 0;
+}
+
+.sidebar, .navbar li > a > i + i {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .sidebar {
+    position: fixed;
+    top: 51px;
+    bottom: 0;
+    left: 0;
+    z-index: 1000;
+    display: block;
+    padding: 20px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    background-color: #fff;
+    border-right: 1px solid #eee;
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar li > a > i + i {
+    display: inline;
+    font-style: normal;
+  }
+}
+
+.nav-sidebar {
+  margin-right: -21px;
+  margin-bottom: 20px;
+  margin-left: -20px;
+  > {
+    li > a {
+      padding-right: 20px;
+      padding-left: 20px;
+    }
+    .active > a {
+      color: #fff;
+      background-color: #428bca;
+      &:hover, &:focus {
+        color: #fff;
+        background-color: #428bca;
+      }
+    }
+  }
+}
+
+.main {
+  padding: 20px;
+  .page-header {
+    margin-top: 0;
+  }
+}
+
+@media (min-width: 768px) {
+  .main {
+    padding-right: 40px;
+    padding-left: 40px;
+  }
+}
+
+.placeholders {
+  margin-bottom: 30px;
+  text-align: center;
+  h4 {
+    margin-bottom: 0;
+  }
+}
+
+.placeholder {
+  margin-bottom: 20px;
+  img {
+    display: inline-block;
+    border-radius: 50%;
+  }
+}

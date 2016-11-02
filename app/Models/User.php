@@ -10,7 +10,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, SoftDeletes, Notifiable;
+    use HasApiTokens, SoftDeletes, Notifiable, Scopes\User;
 
     /**
      * The attributes that should be mutated to dates.

@@ -23,6 +23,14 @@ class CreatePhotosTable extends Migration
                 ->onUpdate('cascade')
                 ->onDelete('set null');
 
+            $table->integer('photo_categories_id')->index();
+
+            $table->foreign('photo_categories_id')
+                ->references('id')
+                ->on('photo_categories')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
+
             // Surrogate string identifier.
             $table->string('label');
 

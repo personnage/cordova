@@ -23,3 +23,10 @@ $factory->define(App\Models\User::class, function (Faker\Generator $faker) {
         'admin' => $faker->boolean(10),
     ];
 });
+
+$factory->define(App\Models\PhotoCategory::class, function (Faker\Generator $faker) {
+    return [
+        'name' => $faker->word,
+        'description' => $faker->paragraph,
+    ];
+});
